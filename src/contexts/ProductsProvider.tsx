@@ -1,18 +1,18 @@
 import { createContext, ReactElement, useState } from "react";
 
-export type Product = {
+export type ProductType = {
   sku: string;
   name: string;
   price: number;
 };
 
-export type UseProductsContext = {
-  products: Product[];
+export type UseProductsContextType = {
+  products: ProductType[];
 };
 
 type ChildrenType = { children?: ReactElement | ReactElement[] };
 
-const initialState: Product[] = [
+const initialState: ProductType[] = [
   {
     sku: "item0001",
     name: "Widget",
@@ -30,12 +30,13 @@ const initialState: Product[] = [
   },
 ];
 
-const initialContextState: UseProductsContext = { products: [] };
+const initialContextState: UseProductsContextType = { products: [] };
 
-const ProductsContext = createContext<UseProductsContext>(initialContextState);
+const ProductsContext =
+  createContext<UseProductsContextType>(initialContextState);
 
 export const ProductsProvider = ({ children }: ChildrenType): ReactElement => {
-  const [products, setProducts] = useState<Product[]>(initialState);
+  const [products, setProducts] = useState<ProductType[]>(initialState);
 
   return (
     <ProductsContext.Provider value={{ products }}>

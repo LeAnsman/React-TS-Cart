@@ -1,14 +1,14 @@
 import { useMemo, useReducer, createContext, ReactElement } from "react";
 
-export type CartItem = {
+export type CartItemType = {
   sku: string;
   name: string;
   price: number;
   quantity: number;
 };
 
-type CartState = {
-  cart: CartItem[];
+type CartStateType = {
+  cart: CartItemType[];
 };
 
 const REDUCER_ACTION_TYPE = {
@@ -22,24 +22,27 @@ export type ReducerActionType = typeof REDUCER_ACTION_TYPE;
 
 export type ReducerAction = {
   type: string;
-  payload?: CartItem;
+  payload?: CartItemType;
 };
 
 type ChildrenType = { children?: ReactElement | ReactElement[] };
 
-const initialCartState: CartState = { cart: [] };
+const initialCartState: CartStateType = { cart: [] };
 
-const reducer = (state: CartState, action: ReducerAction): CartState => {
+const reducer = (
+  state: CartStateType,
+  action: ReducerAction
+): CartStateType => {
   switch (action.type) {
     case REDUCER_ACTION_TYPE.ADD: {
       if (!action.payload) {
         throw new Error("action.payload is missing in ADD action");
       }
       const { sku, name, price } = action.payload;
-      const filteredCart: CartItem[] = state.cart.filter(
+      const filteredCart: CartItemType[] = state.cart.filter(
         (item) => item.sku !== sku
       );
-      const itemExists: CartItem | undefined = state.cart.find(
+      const itemExists: CartItemType | undefined = state.cart.find(
         (item) => item.sku === sku
       );
       const quantity: number = itemExists ? itemExists.quantity + 1 : 1;
@@ -54,7 +57,7 @@ const reducer = (state: CartState, action: ReducerAction): CartState => {
         throw new Error("action.payload is missing in REMOVE action");
       }
       const { sku } = action.payload;
-      const filteredCart: CartItem[] = state.cart.filter(
+      const filteredCart: CartItemType[] = state.cart.filter(
         (item) => item.sku !== sku
       );
       return { ...state, cart: [...filteredCart] };
@@ -65,15 +68,15 @@ const reducer = (state: CartState, action: ReducerAction): CartState => {
       }
       const { sku, quantity } = action.payload;
 
-      const itemExists: CartItem | undefined = state.cart.find(
+      const itemExists: CartItemType | undefined = state.cart.find(
         (item) => item.sku === sku
       );
       if (!itemExists) {
         throw new Error("Item must exist in order to update the quantity");
       }
-      const updatedItem: CartItem = { ...itemExists, quantity };
+      const updatedItem: CartItemType = { ...itemExists, quantity };
 
-      const filteredCart: CartItem[] = state.cart.filter(
+      const filteredCart: CartItemType[] = state.cart.filter(
         (item) => item.sku !== sku
       );
 
@@ -87,7 +90,7 @@ const reducer = (state: CartState, action: ReducerAction): CartState => {
   }
 };
 
-const useCartContext = (initialCartState: CartState) => {
+const useCartContext = (initialCartState: CartStateType) => {
   const [state, dispatch] = useReducer(reducer, initialCartState);
 
   // not worrying about reducer action causing re-rendering

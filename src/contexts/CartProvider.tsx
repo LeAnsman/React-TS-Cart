@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useMemo, useReducer } from "react";
 
 export type CartItem = {
   sku: string;
@@ -83,4 +83,34 @@ const reducer = (state: CartState, action: ReducerAction): CartState => {
     default:
       throw new Error("Unidentified reducer action type");
   }
+};
+
+const useCartContext = (initialCartState: CartState) => {
+  const [state, dispatch] = useReducer(reducer, initialCartState);
+
+  // not worrying about reducer action causing re-rendering
+  const REDUCER_ACTIONS = useMemo(() => {
+    return REDUCER_ACTION_TYPE;
+  }, []);
+
+  const totalItems = state.cart.reduce((prev, cartItem) => {
+    return prev + cartItem.quantity;
+  }, 0);
+
+  const totalPrice = new Intl.NumberFormat("be-FR", {
+    style: "currency",
+    currency: "EUR",
+  }).format(
+    state.cart.reduce((prev, cartItem) => {
+      return prev + cartItem.quantity * cartItem.price;
+    }, 0)
+  );
+
+  const cart = state.cart.sort((a, b) => {
+    const itemA = Number(a.sku.slice(-4));
+    const itemB = Number(b.sku.slice(-4));
+    return itemA - itemB;
+  });
+
+  return { dispatch, REDUCER_ACTIONS, totalItems, totalPrice, cart };
 };

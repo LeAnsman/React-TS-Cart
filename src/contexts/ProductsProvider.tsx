@@ -28,6 +28,11 @@ const initialState: ProductType[] = [
     name: "Deluxe Widget",
     price: 39.99,
   },
+  {
+    sku: "item0004",
+    name: "Triple Luxe Widget",
+    price: 59.99,
+  },
 ];
 
 const initialContextState: UseProductsContextType = { products: [] };
